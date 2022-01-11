@@ -1,10 +1,16 @@
 <template>
-  <div>
+<h1 v-if="!pokemon">Espere por favor...</h1>
+<div v-else>
+ <div>
       <h1>¿Quien es ese pokemon?</h1>
-       <Picture :pokemonId="100" :showPokemon="true"></Picture>
-       <Options :pokemons="pokemonArr"></Options>
-
+       <Picture :pokemonId="pokemon.id" :showPokemon="showPokemon"></Picture>
+       <Options :pokemons="pokemonArr" @selection-pokemon="cheackAnswer"></Options>
+      <template v-if="showAnswer">
+        <h2 class="fade-in">{{message}}</h2>
+        <button v-on:Click=newGame>Nuevo juego</button>
+      </template>
   </div>
+</div>
 </template>
 
 
@@ -17,13 +23,34 @@ export default {
     components: {Picture,Options },
    data(){
      return {
-       pokemonArr : []
+       pokemonArr : [],
+       pokemon : null,
+       showPokemon : false,
+       showAnswer: false,
+       message :''
      }
    },
    methods : {
      async mixPokemonArray(){
        this.pokemonArr = await getPokemonOptions()
-       console.log(this.pokemonArr)
+       const rndInt = Math.floor(Math.random() * 4)
+       this.pokemon = this.pokemonArr[rndInt]
+     },
+     cheackAnswer(pokemonId){
+       this.showPokemon = true
+       if(this.pokemon.id == pokemonId){
+          this.message =`Correcto, ${this.pokemon.name}` 
+       }else{
+         this.message =`Oops, era ${this.pokemon.name}`
+       }
+       this.showAnswer = true
+     },
+     async newGame(){
+       this.showPokemon = false
+       this.showAnswer=false
+       this.pokemonArr=[]
+       this.pokemon=null
+       await this.mixPokemonArray()
      }
    },
    mounted() {

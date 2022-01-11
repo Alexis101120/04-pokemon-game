@@ -2,7 +2,9 @@
   <h3>Pokemon options</h3>
   <div class="options-container">
     <ul>
-     <li v-for="pokemon in pokemons" :key="pokemon.id">
+     <li v-for="pokemon in pokemons" 
+     :key="pokemon.id"
+     @click="$emit('selectionPokemon', pokemon.id)">
        {{pokemon.name}}
      </li>
     
